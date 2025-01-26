@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desserts Recipes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hina+Mincho&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/styles.css') }}">
+    <script src="https://kit.fontawesome.com/ad5cc6e992.js" crossorigin="anonymous"></script>
+</head>
+<body background="{{ url_for('static', filename='images/bg.jpg') }}">
+    <div class="main-title">
+        <h1 align="center">Desserts Recipes</h1>
+    </div>
+    <div class="sub-tabs">
+        <h2><a href="{{ url_for('main_routes.index') }}">Home</a></h2>
+        <h2><a href="{{ url_for('main_routes.classics') }}">Classic Recipes</a></h2>
+        <h2><a href="{{ url_for('main_routes.desserts') }}">Desserts</a></h2>
+    </div>
+
+    <div class="content">
+        <h3>Delightful Desserts</h3>
+        <p>Discover sweet and delicious dessert recipes for every occasion.</p>
+    </div>
+
+    <div class="recipes">
+        <div class="recipe-item">
+            <img src="https://www.edamam.com/web-img/208/208e8e9269e4247158705e51ad02594f.jpg" alt="Dessert-Wine-Poached Pears">
+            <div class="recipe-info">
+                <h4>Dessert-Wine-Poached Pears</h4>
+                <p>Calories: 399.30</p>
+                <p>Time: 30 minutes</p>
+                <p>Diet: Low-Fat</p>
+                <a href="http://www.donnahay.com.au/recipes/sweets/fruit/dessert-wine-poached-pears" target="_blank" class="view-btn">View Recipe</a>
+            </div>
+        </div>
+
+        <div class="recipe-item">
+            <img src="https://www.edamam.com/web-img/4e2/4e20931c2aa8783e3ef34bcf3781bb4b.jpg" alt="French Apple Tart">
+            <div class="recipe-info">
+                <h4>French Apple Tart</h4>
+                <p>Calories: 125.49</p>
+                <p>Time: 40 minutes</p>
+                <p>Diet: Vegetarian</p>
+                <a href="https://food52.com/recipes/32157-french-apple-tart-tarte-fine-aux-pommes-vegan" target="_blank" class="view-btn">View Recipe</a>
+            </div>
+        </div>
+
+        <div class="recipe-item">
+            <img src="https://www.edamam.com/web-img/3c3/3c3b64642fd1bef866b700bf33ba3c79.jpg" alt="Moroccan Orange Dessert">
+            <div class="recipe-info">
+                <h4>Moroccan Orange Dessert</h4>
+                <p>Calories: 135.90</p>
+                <p>Time: 20 minutes</p>
+                <p>Diet: Low-Sodium</p>
+                <a href="http://simplyrecipes.com/recipes/moroccan_orange_dessert/" target="_blank" class="view-btn">View Recipe</a>
+            </div>
+        </div>
+
+        <div class="recipe-item">
+            <img src="https://www.edamam.com/web-img/341/3416154d6dbccc1286f2d9a7ddab6336.jpg" alt="Tuscan Zabaione">
+            <div class="recipe-info">
+                <h4>Tuscan Zabaione</h4>
+                <p>Calories: 139.06</p>
+                <p>Time: 10 minutes</p>
+                <p>Diet: Low-Sodium</p>
+                <a href="http://honestcooking.com/tuscan-zabaione/" target="_blank" class="view-btn">View Recipe</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
