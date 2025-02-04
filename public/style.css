@@ -1,0 +1,131 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+.container {
+    background: white;
+    padding: 25px;
+    max-width: 500px;
+    margin: auto;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
+h2 {
+    color: #333;
+    margin-bottom: 15px;
+}
+.input-field {
+    width: 90%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+}
+.shorten-btn {
+    width: 90%;
+    padding: 12px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.shorten-btn:hover {
+    background-color: #0056b3;
+}
+.result {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e9ffe9;
+    border-radius: 8px;
+    display: none;
+}
+.copy-btn {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.copy-btn:hover {
+    background-color: #218838;
+}
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #333;
+    color: white;
+}
+.container.dark-mode {
+    background: #444;
+    color: white;
+}
+.input-field.dark-mode, .shorten-btn.dark-mode {
+    background-color: #555;
+    color: white;
+    border: 1px solid #777;
+}
+/* Toggle Switch */
+.switch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+    font-size: 14px;
+}
+.switch input {
+    display: none;
+}
+.slider {
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+    margin-left: 10px;
+}
+.slider:before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    left: 2px;
+    top: 1px;
+    transition: 0.3s;
+}
+input:checked + .slider {
+    background-color: #007BFF;
+}
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+/* Recent Links */
+.recent-links {
+    margin-top: 20px;
+    text-align: left;
+}
+.recent-links ul {
+    list-style: none;
+    padding: 0;
+}
+.recent-links li {
+    margin: 5px 0;
+}

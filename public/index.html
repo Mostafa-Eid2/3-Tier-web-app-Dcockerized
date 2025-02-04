@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <!-- Link to External CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Simple URL Shortener</h2>
+        
+        <!-- Input for Long URL -->
+        <input type="text" id="longUrl" placeholder="Enter a long URL" class="input-field">
+        
+        <!-- Optional: Custom Short Code -->
+        <input type="text" id="customCode" placeholder="Custom short code (optional)" class="input-field">
+
+        <!-- Shorten Button -->
+        <button onclick="shortenUrl()" class="shorten-btn">Shorten URL</button>
+    </div>
+
+    <!-- Shortened URL Display Section -->
+    <div class="result" id="result">
+        <p id="shortenedUrl"></p>
+        <button onclick="copyToClipboard()" id="copyBtn" class="copy-btn" style="display: none;">Copy URL</button>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <label class="switch">
+        <input type="checkbox" id="darkModeToggle" onclick="toggleDarkMode()">
+        <span class="slider"></span> Dark Mode
+    </label>
+
+    <!-- Recent Shortened Links Section -->
+    <div class="recent-links">
+        <h3>Recent Shortened Links</h3>
+        <ul id="recentLinksList"></ul>
+    </div>
+
+    <script>
+        // 🔹 Shorten URL Function
+        async function shortenUrl() {
+            const longUrl = document.getElementById('longUrl').value;
+            const customCode = document.getElementById('customCode').value || null;
+
+            if (!longUrl) {
+                alert('Please enter a valid URL');
+                return;
+            }
+
+            const requestBody = customCode ? { longUrl, shortCode: customCode } : { longUrl };
+
+            const response = await fetch('http://localhost:3000/shorten', { // Ensure this URL matches your backend
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
+            });
+
+            const data = await response.json();
+            if (data.shortUrl) {
+                document.getElementById('shortenedUrl').innerHTML = `
+                    Shortened URL: <a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>
+                `;
+                document.getElementById('result').style.display = "block";
+                document.getElementById('copyBtn').style.display = "inline-block";
+                
+                saveToRecentLinks(data.shortUrl);
+            } else {
+                document.getElementById('shortenedUrl').innerText = 'Failed to shorten URL';
+            }
+        }
+
+        // 🔹 Copy to Clipboard Function
+        function copyToClipboard() {
+            const urlText = document.getElementById('shortenedUrl').innerText.split(' ')[1];
+            navigator.clipboard.writeText(urlText).then(() => {
+                alert("Shortened URL copied to clipboard!");
+            });
+        }
+
+        // 🔹 Dark Mode Toggle Function
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+            document.querySelector(".container").classList.toggle("dark-mode");
+            document.querySelectorAll(".input-field, .shorten-btn").forEach(el => el.classList.toggle("dark-mode"));
+            
+            const darkModeEnabled = document.body.classList.contains("dark-mode");
+            localStorage.setItem("darkMode", darkModeEnabled);
+        }
+
+        // 🔹 Save Recent Links Function
+        function saveToRecentLinks(shortUrl) {
+            let recentLinks = JSON.parse(localStorage.getItem("recentLinks")) || [];
+            recentLinks.unshift(shortUrl);
+            recentLinks = recentLinks.slice(0, 5); // Store only the latest 5 links
+            localStorage.setItem("recentLinks", JSON.stringify(recentLinks));
+            displayRecentLinks();
+        }
+
+        // 🔹 Display Recent Links Function
+        function displayRecentLinks() {
+            const recentLinks = JSON.parse(localStorage.getItem("recentLinks")) || [];
+            const list = document.getElementById("recentLinksList");
+            list.innerHTML = "";
+            recentLinks.forEach(link => {
+                list.innerHTML += `<li><a href="${link}" target="_blank">${link}</a></li>`;
+            });
+        }
+
+        // 🔹 Load Saved Dark Mode & Recent Links on Page Load
+        window.onload = () => {
+            if (localStorage.getItem("darkMode") === "true") {
+                toggleDarkMode();
+                document.getElementById("darkModeToggle").checked = true;
+            }
+            displayRecentLinks();
+        };
+    </script>
+</body>
+</html>
