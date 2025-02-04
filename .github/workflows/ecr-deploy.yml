@@ -1,0 +1,110 @@
+name: Ultimate AWS ECR Deployment 🚀
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  FRONTEND_DIR: FrontEnd
+  BACKEND_DIR: BackEnd
+  FRONTEND_IMAGE: frontend-app
+  BACKEND_IMAGE: backend-app
+
+jobs:
+  analyze-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend_changed: ${{ steps.check-frontend.outputs.changed }}
+      backend_changed: ${{ steps.check-backend.outputs.changed }}
+    steps:
+      - name: Checkout Code 🛠️
+        uses: actions/checkout@v4
+
+      - name: Detect Changes in Frontend
+        id: check-frontend
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            frontend:
+              - '${{ env.FRONTEND_DIR }}/**'
+
+      - name: Detect Changes in Backend
+        id: check-backend
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            backend:
+              - '${{ env.BACKEND_DIR }}/**'
+
+  prepare-infra:
+    runs-on: ubuntu-latest
+    needs: analyze-changes
+    steps:
+      - name: Configure AWS Credentials 🔐
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Ensure ECR Repositories Exist 📦
+        run: |
+          aws ecr describe-repositories --repository-names ${{ env.FRONTEND_IMAGE }} || \
+          aws ecr create-repository --repository-name ${{ env.FRONTEND_IMAGE }}
+
+          aws ecr describe-repositories --repository-names ${{ env.BACKEND_IMAGE }} || \
+          aws ecr create-repository --repository-name ${{ env.BACKEND_IMAGE }}
+
+  build-push-frontend:
+    runs-on: ubuntu-latest
+    needs: [analyze-changes, prepare-infra]
+    if: needs.analyze-changes.outputs.frontend_changed == 'true'
+    steps:
+      - name: Checkout Code 🛠️
+        uses: actions/checkout@v4
+
+      - name: Login to Amazon ECR 🔑
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build & Push Frontend Image 🎨
+        run: |
+          ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG=${{ github.sha }}
+
+          docker build -t $ECR_REGISTRY/${{ env.FRONTEND_IMAGE }}:$IMAGE_TAG -f ${{ env.FRONTEND_DIR }}/Dockerfile .
+          docker push $ECR_REGISTRY/${{ env.FRONTEND_IMAGE }}:$IMAGE_TAG
+
+  build-push-backend:
+    runs-on: ubuntu-latest
+    needs: [analyze-changes, prepare-infra]
+    if: needs.analyze-changes.outputs.backend_changed == 'true'
+    steps:
+      - name: Checkout Code 🛠️
+        uses: actions/checkout@v4
+
+      - name: Login to Amazon ECR 🔑
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build & Push Backend Image 🏗️
+        run: |
+          ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG=${{ github.sha }}
+
+          docker build -t $ECR_REGISTRY/${{ env.BACKEND_IMAGE }}:$IMAGE_TAG -f ${{ env.BACKEND_DIR }}/Dockerfile .
+          docker push $ECR_REGISTRY/${{ env.BACKEND_IMAGE }}:$IMAGE_TAG
+
+  finalize-deployment:
+    runs-on: ubuntu-latest
+    needs: [build-push-frontend, build-push-backend]
+    steps:
+      - name: Notify Success ✅
+        run: echo "Deployment to AWS ECR complete!"
+
